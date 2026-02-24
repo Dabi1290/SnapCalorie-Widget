@@ -1,50 +1,27 @@
-# Welcome to your Expo app 👋
+# SnapCalorie iOS Widget Prototype 🍏
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+![SnapCalorie Widget](image.png)
 
-## Get started
+This repository contains a working prototype of an iOS Home Screen widget designed for **SnapCalorie**. As a daily user of the app, I built this to demonstrate how a quick-glance macro and calorie tracker could look and function on iOS.
 
-1. Install dependencies
+Since the main SnapCalorie app is built using **Expo and React Native**, this prototype was specifically structured to bridge a React Native environment with native Swift iOS widgets using Expo App Groups and `@bacons/apple-targets`.
 
-   ```bash
-   npm install
-   ```
+## 📂 Where to Look (Important Files)
 
-2. Start the app
+The React Native app in this repository is purely a "tester" interface to send data to the widget. **The core focus of this repository is the native Swift widget code.**
 
-   ```bash
-   npx expo start
-   ```
+If you want to review the widget implementation, please look at these files:
 
-In the output, you'll find options to open the app in a
+- ➡️ **`targets/widget/Widget.swift`**: This is the most important file. It contains the entire SwiftUI interface, the Timeline Provider, and the data models for the widget.
+- ➡️ **`targets/widget/expo-target.config.js`**: Contains the App Group entitlements required to share data between Expo and the iOS system.
+- ➡️ **`app/index.tsx`**: The React Native tester app. It uses `ExtensionStorage` to push simulated user data (Calories, Protein, Carbs, Fat) to the shared iOS App Group.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 🚀 How to Test it Locally
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+You can test the widget in real-time using the included Expo app simulator:
 
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+1. Clone the repository and run `npm install`.
+2. Generate the native iOS folders by running `npx expo prebuild --clean`.
+3. Start the iOS simulator by running `npx expo run:ios`.
+4. Once the app opens, use the sliders to adjust the calories and macros, then tap **"Update Widget"**.
+5. Go to the iOS Simulator Home Screen, long-press the background, tap the **+** icon, and add the **SnapCalorie** widget to see the data update dynamically!

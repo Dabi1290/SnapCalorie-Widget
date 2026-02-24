@@ -1,98 +1,139 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { ExtensionStorage } from "@bacons/apple-targets";
+import Slider from "@react-native-community/slider";
+import React, { useState } from "react";
+import {
+  Alert,
+  Button,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+// Assicurati che questo sia ESATTAMENTE identico a quello in app.json e in Swift
+const storage = new ExtensionStorage("group.com.snapcalorie.data");
 
-export default function HomeScreen() {
+export default function MainScreen() {
+  // Stati per i selettori (impostati su valori iniziali)
+  const [calories, setCalories] = useState(1450);
+  const [protein, setProtein] = useState(110);
+  const [carbs, setCarbs] = useState(130);
+  const [fat, setFat] = useState(45);
+
+  const updateWidgetData = () => {
+    // 1. Salva i valori scelti con gli slider nell'App Group condiviso
+    storage.set("currentCalories", Math.round(calories));
+    storage.set("targetCalories", 2200);
+    storage.set("protein", Math.round(protein));
+    storage.set("carbs", Math.round(carbs));
+    storage.set("fat", Math.round(fat));
+
+    // 2. Forza iOS a ricaricare l'interfaccia del widget
+    ExtensionStorage.reloadWidget();
+    Alert.alert(
+      "Widget Aggiornato!",
+      "Torna alla Home per vedere i nuovi valori.",
+    );
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.title}>Simulatore SnapCalorie</Text>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      {/* Selettore Calorie */}
+      <View style={styles.sliderContainer}>
+        <Text style={styles.label}>
+          Calorie: {Math.round(calories)} / 2200 kcal
+        </Text>
+        <Slider
+          style={styles.slider}
+          minimumValue={0}
+          maximumValue={2200}
+          value={calories}
+          onValueChange={setCalories}
+          minimumTrackTintColor="#12C871" // Verde SnapCalorie
+        />
+      </View>
+
+      {/* Selettore Proteine */}
+      <View style={styles.sliderContainer}>
+        <Text style={styles.label}>
+          Proteine: {Math.round(protein)}g / 150g
+        </Text>
+        <Slider
+          style={styles.slider}
+          minimumValue={0}
+          maximumValue={150}
+          value={protein}
+          onValueChange={setProtein}
+          minimumTrackTintColor="#007AFF" // Blu
+        />
+      </View>
+
+      {/* Selettore Carboidrati */}
+      <View style={styles.sliderContainer}>
+        <Text style={styles.label}>
+          Carboidrati: {Math.round(carbs)}g / 200g
+        </Text>
+        <Slider
+          style={styles.slider}
+          minimumValue={0}
+          maximumValue={200}
+          value={carbs}
+          onValueChange={setCarbs}
+          minimumTrackTintColor="#FF9500" // Arancione
+        />
+      </View>
+
+      {/* Selettore Grassi */}
+      <View style={styles.sliderContainer}>
+        <Text style={styles.label}>Grassi: {Math.round(fat)}g / 70g</Text>
+        <Slider
+          style={styles.slider}
+          minimumValue={0}
+          maximumValue={70}
+          value={fat}
+          onValueChange={setFat}
+          minimumTrackTintColor="#FF3B30" // Rosso
+        />
+      </View>
+
+      <View style={styles.buttonWrapper}>
+        <Button
+          title="Aggiorna Widget"
+          onPress={updateWidgetData}
+          color="#12C871"
+        />
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    backgroundColor: "#f2f2f7",
+    padding: 20,
+    justifyContent: "center",
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 30,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  sliderContainer: {
+    backgroundColor: "#fff",
+    padding: 15,
+    borderRadius: 12,
+    marginBottom: 15,
+  },
+  label: { fontSize: 16, fontWeight: "600", marginBottom: 10 },
+  slider: { width: "100%", height: 40 },
+  buttonWrapper: {
+    marginTop: 20,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 5,
   },
 });
